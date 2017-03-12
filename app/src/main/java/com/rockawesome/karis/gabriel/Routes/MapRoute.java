@@ -1,6 +1,7 @@
 package com.rockawesome.karis.gabriel.Routes;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -48,7 +51,7 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
                     try {
                         location = locationManager.getLastKnownLocation("gps");
                     } catch(SecurityException error) {
-                        //TODO: another exception to handle
+                        securityExceptionHandler(error);
                     }
                 }
                 currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -100,7 +103,7 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
         try {
             this.locationManager.requestLocationUpdates("gps", 5000, 5, this.locationListener);
         } catch(SecurityException error) {
-            //TODO: deal with this exception
+            securityExceptionHandler(error);
         }
     }
 
@@ -112,5 +115,18 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
 
         // Otherwise, set a marker on the map
 
+    }
+
+    private void securityExceptionHandler(SecurityException error) {
+        AlertDialog errorAlert = new AlertDialog.Builder(MapRoute.this).create();
+        errorAlert.setTitle("Location Error");
+        errorAlert.setMessage("Gabriel encountered an error when trying to access your location");
+        errorAlert.setButton(AlertDialog.BUTTON_NEUTRAL, "Go To Location Services", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        });
     }
 }

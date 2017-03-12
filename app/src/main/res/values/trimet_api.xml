@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="trimet_key" templateMergeStrategy="preserve" translatable="false">&amp;appID=A29254AB759D6AB2646A3DBD3</string>
-    <string name="trimet_base_url" templateMergeStrategy="preserve" translatable="false">https://developer.trimet.org/ws/</string>
-    <string name="trimet_vehicle_addon" templateMergeStrategy="preserve" translatable="false">v2/vehicles?</string>
-    <string name="trimet_route_addon" templateMergeStrategy="preserve" translatable="false">v1/routeConfig?</string>
-</resources>

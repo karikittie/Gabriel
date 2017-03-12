@@ -43,8 +43,15 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onLocationChanged(Location location) {
                 if(locationMarker != null) locationMarker.remove();
-                if(location == null) return;
-                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                LatLng currentLocation;
+                if(location == null) {
+                    try {
+                        location = locationManager.getLastKnownLocation("gps");
+                    } catch(SecurityException error) {
+                        //TODO: another exception to handle
+                    }
+                }
+                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 locationMarker = mMap.addMarker(new MarkerOptions().position(currentLocation).title("Me"));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0F));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));

@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,6 +43,33 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
 
         this.locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         this.locationMarker = null;
+        this.locationListener = null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch(requestCode) {
+            case 1:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    startLocationServices();
+        }
+    }
+
+    private void startLocationServices() {
+        try {
+            this.locationManager.requestLocationUpdates("gps", 5000, 5, this.locationListener);
+        } catch(SecurityException error) {
+            securityExceptionHandler(error);
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.mMap = googleMap;
+        startListeningForLocation();
+    }
+
+    private void startListeningForLocation() {
         this.locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -81,43 +109,16 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.INTERNET
-                        }, 1);
+                }, 1);
                 return;
             }
         } else {
             startLocationServices();
         }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch(requestCode) {
-            case 1:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    startLocationServices();
-        }
-    }
-
-    private void startLocationServices() {
-        try {
-            this.locationManager.requestLocationUpdates("gps", 5000, 5, this.locationListener);
-        } catch(SecurityException error) {
-            securityExceptionHandler(error);
-        }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.mMap = googleMap;
-
-        // Add a marker to current location
-
-        // Otherwise, set a marker on the map
-
     }
 
     private void securityExceptionHandler(SecurityException error) {
+        Log.e(error.getCause().toString(), error.getMessage());
         AlertDialog errorAlert = new AlertDialog.Builder(MapRoute.this).create();
         errorAlert.setTitle("Location Error");
         errorAlert.setMessage("Gabriel encountered an error when trying to access your location");

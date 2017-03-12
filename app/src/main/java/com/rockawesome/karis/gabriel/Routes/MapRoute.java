@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.rockawesome.karis.gabriel.R;
 import com.rockawesome.karis.gabriel.Routes.Locations.CurrentLocation;
@@ -26,6 +27,7 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
     private android.location.LocationListener locationListener;
     private CurrentLocation currentLocation;
     private boolean foundLocation;
+    private Marker locationMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +41,11 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        this.mMap = googleMap;
 
         // Add a marker to current location
         this.currentLocation = new CurrentLocation();
+        connectWithCurrentLocation(); // Connect to CurrentLocation instance for on-the-fly updates
         long start = System.currentTimeMillis();
         long end = start + (15 * 1000); // 15 second GPS timeout
         LatLng location = null;
@@ -53,7 +56,18 @@ public class MapRoute extends FragmentActivity implements OnMapReadyCallback {
             return;
         }
         // Otherwise, set a marker on the map
-        mMap.addMarker(new MarkerOptions().position(location).title("Me"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        this.locationMarker = this.mMap.addMarker(new MarkerOptions().position(location).title("Me"));
+        this.mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+    }
+
+    // Two-way connection so the current location marker will be updated when the location changes
+    public void connectWithCurrentLocation() {
+        if(this.currentLocation != null) this.currentLocation.connectWithMap(this);
+    }
+
+    public void updateCurrentLocation(LatLng location) {
+        if(this.locationMarker != null) this.locationMarker.remove(); // Remove old marker
+        this.locationMarker = this.mMap.addMarker(new MarkerOptions().position(location).title("Me"));
+        this.mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
     }
 }

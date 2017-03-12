@@ -59,7 +59,9 @@ public class WebRequest extends Application {
 
     public JsonObject blockRouteLoad(boolean forceUpdate) {
         if(System.currentTimeMillis() > (this.lastRouteCache + this.routeCacheTimeout) || forceUpdate) {
-            String response = executeRequest(this.baseURLRequest + "routeConfig");
+            String response = executeRequest(this.baseURLRequest
+                                            + this.routeURLAddon
+                                            + appIDAddon);
             if(response == null) parseError(new IOException("Response was empty"));
             this.cachedRouteRequest = (JsonObject) this.parser.parse(response);
             this.lastRouteCache = System.currentTimeMillis();
@@ -70,7 +72,9 @@ public class WebRequest extends Application {
 
     public JsonObject blockCarLoad(boolean forceUpdate) {
         if(System.currentTimeMillis() > (this.lastCarCache + this.carCacheTimeout) || forceUpdate) {
-            String response = executeRequest(this.baseURLRequest + "vehicles");
+            String response = executeRequest(this.baseURLRequest
+                                            + this.vehicleURLAddon
+                                            + appIDAddon);
             if(response == null) parseError(new IOException("Response was empty"));
             this.cachedCarRequest = (JsonObject) this.parser.parse(response);
             this.lastCarCache = System.currentTimeMillis();

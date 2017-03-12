@@ -30,7 +30,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapRoute"
+            android:name=".Routes.MapRoute"
             android:label="@string/title_activity_map_route">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

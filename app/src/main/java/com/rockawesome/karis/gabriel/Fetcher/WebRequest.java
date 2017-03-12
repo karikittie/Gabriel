@@ -46,7 +46,7 @@ public class WebRequest extends Application {
         this.baseURLRequest = r.getString(R.string.trimet_base_url);
         this.vehicleURLAddon = r.getString(R.string.trimet_vehicle_addon);
         this.routeURLAddon = r.getString(R.string.trimet_route_addon);
-        this.appIDAddon = r.getString(R.string.trimet_key);
+        this.appIDAddon = r.getString(R.string.trimet_app_key);
 
         this.cachedRouteRequest = null;
         this.parser = new JsonParser();
